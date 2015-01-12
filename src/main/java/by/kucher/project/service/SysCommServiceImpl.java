@@ -14,36 +14,39 @@ public class SysCommServiceImpl implements SysCommService {
 	@Resource
 	private SysCommRepository sysCommRepository;
 
-	Integer msgts = 1407963511;
-
 	@Override
-	public List<Object[]> dailyResDeploy() {
-		return sysCommRepository.dailyActivity(msgts, "resdeploy");
+	public List<Object[]> dailyResDeploy(Integer msgtsStart, Integer msgtsFinish) {
+		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "resdeploy");
 	}
 
 	@Override
-	public List<Object[]> dailyResDestroy() {
-		return sysCommRepository.dailyActivity(msgts, "resdestroy");
+	public List<Object[]> dailyResDestroy(Integer msgtsStart, Integer msgtsFinish) {
+		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "resdestroy");
 	}
 
 	@Override
-	public List<Object[]> dailyLinkCreate() {
-		return sysCommRepository.dailyActivity(msgts, "linkcreate");
+	public List<Object[]> dailyLinkCreate(Integer msgtsStart, Integer msgtsFinish) {
+		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "linkcreate");
 	}
 
 	@Override
-	public List<Object[]> dailyLinkDestroy() {
-		return sysCommRepository.dailyActivity(msgts, "linkdestroy");
+	public List<Object[]> dailyLinkDestroy(Integer msgtsStart, Integer msgtsFinish) {
+		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "linkdestroy");
 	}
 
 	@Override
-	public List<Object[]> dailyFieldCreate() {
-		return sysCommRepository.dailyActivity(msgts, "fieldcreate");
+	public List<Object[]> dailyFieldCreate(Integer msgtsStart, Integer msgtsFinish) {
+		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "fieldcreate");
 	}
 
 	@Override
-	public List<Object[]> dailyPortalCapture() {
-		return sysCommRepository.dailyActivity(msgts, "portalcapture");
+	public List<Object[]> dailyFieldDestroy(Integer msgtsStart, Integer msgtsFinish) {
+		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "fielddestroy");
+	}
+
+	@Override
+	public List<Object[]> dailyPortalCapture(Integer msgtsStart, Integer msgtsFinish) {
+		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "portalcapture");
 	}
 
 }

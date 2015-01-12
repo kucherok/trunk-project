@@ -12,8 +12,9 @@ public interface SysCommRepository extends JpaRepository<Syscomm, Integer> {
 
 	@Query(value = "SELECT s.playerguid, COUNT(p) as nicknameAmount "
 			+ "FROM Syscomm s LEFT JOIN s.playerguid p "
-			+ "WHERE s.playerguid = p.guid AND s.msgts >= :msgts " + "AND s.eventtype = :eventtype "
-			+ "GROUP BY p " + "ORDER BY nicknameAmount DESC")
-	public List<Object[]> dailyActivity(@Param("msgts") Integer msgts, @Param("eventtype") String eventtype);
+			+ "WHERE s.playerguid = p.guid AND s.msgts BETWEEN :msgtsStart AND :msgtsFinish "
+			+ "AND s.eventtype = :eventtype " + "GROUP BY p " + "ORDER BY nicknameAmount DESC")
+	public List<Object[]> dailyActivity(@Param("msgtsStart") Integer msgtsStart,
+			@Param("msgtsFinish") Integer msgtsFinish, @Param("eventtype") String eventtype);
 
 }
