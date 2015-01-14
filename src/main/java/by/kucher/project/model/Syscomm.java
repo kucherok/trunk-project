@@ -32,7 +32,7 @@ public class Syscomm implements Serializable {
 	private String eventtype;
 
 	@Column(nullable = false)
-	private int msgts;
+	private long msgts;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "playerguid")
@@ -44,8 +44,12 @@ public class Syscomm implements Serializable {
 	@Column(length = 16)
 	private String plextType;
 
-	@Column(nullable = false, length = 35)
-	private String portalgid;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "portalgid")
+	private Portal portal;
+	
+	// @Column(nullable = false, length = 35)
+	// private String portalgid;
 
 	private int resonatorlevel;
 
@@ -75,7 +79,7 @@ public class Syscomm implements Serializable {
 		this.eventtype = eventtype;
 	}
 
-	public int getMsgts() {
+	public long getMsgts() {
 		return this.msgts;
 	}
 
@@ -106,14 +110,22 @@ public class Syscomm implements Serializable {
 	public void setPlextType(String plextType) {
 		this.plextType = plextType;
 	}
-
-	public String getPortalgid() {
-		return this.portalgid;
+	
+	public Portal getPortal() {
+		return portal;
 	}
 
-	public void setPortalgid(String portalgid) {
-		this.portalgid = portalgid;
+	public void setPortal(Portal portal) {
+		this.portal = portal;
 	}
+
+	// public String getPortalgid() {
+	// return this.portalgid;
+	// }
+	//
+	// public void setPortalgid(String portalgid) {
+	// this.portalgid = portalgid;
+	// }
 
 	public int getResonatorlevel() {
 		return this.resonatorlevel;

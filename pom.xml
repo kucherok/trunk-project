@@ -22,7 +22,7 @@
 		<hibernate.version>4.3.7.Final</hibernate.version>
 		<mysql.version>5.1.34</mysql.version>
 		<!-- Vaadin -->
-		<vaadin.version>7.3.7</vaadin.version>
+		<vaadin.version>7.3.8</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 		<!-- Logging -->
 		<logback.version>1.1.2</logback.version>
@@ -77,6 +77,18 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Vaadin addons -->
+		<dependency>
+			<groupId>ru.xpoft.vaadin</groupId>
+			<artifactId>spring-vaadin-integration</artifactId>
+			<version>${spring.vaadin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin.addon</groupId>
+			<artifactId>vaadin-charts</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -106,13 +118,6 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>2.3.20</version>
-		</dependency>
-
-		<!-- Spring Vaadin Integration -->
-		<dependency>
-			<groupId>ru.xpoft.vaadin</groupId>
-			<artifactId>spring-vaadin-integration</artifactId>
-			<version>${spring.vaadin.version}</version>
 		</dependency>
 
 		<!-- for JPA, use hibernate-entitymanager instead of hibernate-core -->

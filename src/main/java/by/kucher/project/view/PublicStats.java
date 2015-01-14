@@ -1,7 +1,6 @@
 package by.kucher.project.view;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -17,12 +16,14 @@ import by.kucher.project.model.Guid;
 import by.kucher.project.service.SysCommService;
 
 import com.vaadin.data.Item;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -43,102 +44,116 @@ public class PublicStats extends Panel implements View {
 	@Autowired
 	private SysCommService sysCommService;
 
-	private static final Integer MSGTSSTART = 1407953511;
-	private static final Integer MSGTSFINISH = 1407963511;
+	private static final Long MSGTSSTART = (long) 1407953511;
+	private static final Long MSGTSFINISH = (long) 1407963511;
 
 	private static final String NICKNAME = "nickname";
 	private static final String AMOUNT = "amount";
+
+	private Table tableResDeploy = new Table("Resonators deployed 24h");
+	private Table tableResDestroy = new Table("Resonators destroy 24h");
+	private Table tableLinkCreate = new Table("Create Links 24h");
+	private Table tableLinkDestroy = new Table("Destroy Links 24h");
+	private Table tableFieldCreate = new Table("Create field 24h");
+	private Table tableFieldDestroy = new Table("Field Destroy 24h");
+	private Table tablePortalCapture = new Table("Portal Capture 24h");
 
 	@PostConstruct
 	public void PostConstruct() {
 
 		setSizeFull();
 
-		final VerticalLayout vlGlobalFilter = new VerticalLayout();
-		// vlGlobalFilter.setSizeFull();
-		vlGlobalFilter.setImmediate(true);
-		vlGlobalFilter.setSpacing(true);
+		final VerticalLayout vlGlobalLayout = new VerticalLayout();
+		vlGlobalLayout.setImmediate(true);
+		vlGlobalLayout.setSpacing(true);
 
-		final PopupDateField globalDateFilter = new PopupDateField("Enter date", new Date());
-		globalDateFilter.setImmediate(true);
-		globalDateFilter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
-		globalDateFilter.setResolution(Resolution.MINUTE);
-		globalDateFilter.setDateFormat("yyyy-MM-dd hh:mm");
-		vlGlobalFilter.addComponent(globalDateFilter);
+		final HorizontalLayout hlFilter = new HorizontalLayout();
+		hlFilter.setImmediate(true);
+		hlFilter.setSpacing(true);
 
-		globalDateFilter.addValueChangeListener(new ValueChangeListener() {
+		final PopupDateField globalStartDateFilter = new PopupDateField();
+		final PopupDateField globalFinishDateFilter = new PopupDateField();
+		globalStartDateFilter.setImmediate(true);
+		globalFinishDateFilter.setImmediate(true);
+		globalStartDateFilter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+		globalFinishDateFilter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+		globalStartDateFilter.setResolution(Resolution.MINUTE);
+		globalFinishDateFilter.setResolution(Resolution.MINUTE);
+		globalStartDateFilter.setDateFormat("yyyy-MM-dd hh:mm");
+		globalFinishDateFilter.setDateFormat("yyyy-MM-dd hh:mm");
 
-			private static final long serialVersionUID = -1070411712937785285L;
+		// backup DB
+		globalStartDateFilter.setValue(new Date(MSGTSSTART * 1000));
+		globalFinishDateFilter.setValue(new Date(MSGTSFINISH * 1000));
+
+		// production
+		// globalStartDateFilter.setValue(minusDays(new Date(), -1));
+		// globalFinishDateFilter.setValue(new Date());
+
+		hlFilter.addComponent(globalStartDateFilter);
+		hlFilter.addComponent(globalFinishDateFilter);
+
+		final Button bFilter = new Button("filter", FontAwesome.REFRESH);
+		bFilter.setImmediate(true);
+		bFilter.addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = -3445242859848270038L;
 
 			@Override
-			public void valueChange(ValueChangeEvent event) {
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-				// dateFormat.parse(dateFormat.format(event.getProperty().getValue()));
-
-				Date d = (Date) event.getProperty().getValue();
-
-				Timestamp t = new Timestamp(1407963511);
-				Date dd = new Date(t.getTime()*1000);
-
-				Notification.show("date to integer = ", String.valueOf(d.getTime()), Type.ERROR_MESSAGE);
-				System.out.println(String.valueOf(d.getTime()/1000));
-				System.out.println(dd);
-				System.out.println(dateFormat.format(dd));
-				// System.out.println("1407963511");
-				// System.out.println(new Date(d.getTime()));
-				// System.out.println(new Date(1407963511));
+			public void buttonClick(ClickEvent event) {
+				Notification.show("run filter", Type.WARNING_MESSAGE);
+				buildContainerDataSource(globalStartDateFilter.getValue().getTime() / 1000,
+						globalFinishDateFilter.getValue().getTime() / 1000);
 			}
 		});
+		hlFilter.addComponent(bFilter);
+
+		vlGlobalLayout.addComponent(hlFilter);
 
 		final HorizontalLayout hlPublicStats = new HorizontalLayout();
 		hlPublicStats.setSizeFull();
 		hlPublicStats.setImmediate(true);
 		hlPublicStats.setSpacing(true);
 
-		final Table tableResDeploy = new Table("Resonators deployed 24h");
 		tableResDeploy.setImmediate(true);
-		List<Object[]> listResultResDeploy = sysCommService.dailyResDeploy(MSGTSSTART, MSGTSFINISH);
-		tableResDeploy.setContainerDataSource(buildContainer(listResultResDeploy));
-		hlPublicStats.addComponent(tableResDeploy);
-
-		final Table tableResDestroy = new Table("Resonators destroy 24h");
 		tableResDestroy.setImmediate(true);
-		List<Object[]> listResultResDestroy = sysCommService.dailyResDestroy(MSGTSSTART, MSGTSFINISH);
-		tableResDestroy.setContainerDataSource(buildContainer(listResultResDestroy));
-		hlPublicStats.addComponent(tableResDestroy);
-
-		final Table tableLinkCreate = new Table("Create Links 24h");
 		tableLinkCreate.setImmediate(true);
-		List<Object[]> listResultLinkCreate = sysCommService.dailyLinkCreate(MSGTSSTART, MSGTSFINISH);
-		tableLinkCreate.setContainerDataSource(buildContainer(listResultLinkCreate));
-		hlPublicStats.addComponent(tableLinkCreate);
-
-		final Table tableLinkDestroy = new Table("Destroy Links 24h");
 		tableLinkDestroy.setImmediate(true);
-		List<Object[]> listResultLinkDestroy = sysCommService.dailyLinkDestroy(MSGTSSTART, MSGTSFINISH);
-		tableLinkDestroy.setContainerDataSource(buildContainer(listResultLinkDestroy));
-		hlPublicStats.addComponent(tableLinkDestroy);
-
-		final Table tableFieldCreate = new Table("Create field 24h");
 		tableFieldCreate.setImmediate(true);
-		List<Object[]> listResultFieldCreate = sysCommService.dailyFieldCreate(MSGTSSTART, MSGTSFINISH);
-		tableFieldCreate.setContainerDataSource(buildContainer(listResultFieldCreate));
-		hlPublicStats.addComponent(tableFieldCreate);
-
-		final Table tableFieldDestroy = new Table("Field Destroy 24h");
 		tableFieldDestroy.setImmediate(true);
-		List<Object[]> listResultFieldDestroy = sysCommService.dailyFieldDestroy(MSGTSSTART, MSGTSFINISH);
-		tableFieldDestroy.setContainerDataSource(buildContainer(listResultFieldDestroy));
-		hlPublicStats.addComponent(tableFieldDestroy);
-
-		final Table tablePortalCapture = new Table("Portal Capture 24h");
 		tablePortalCapture.setImmediate(true);
-		List<Object[]> listResultFieldCapture = sysCommService.dailyPortalCapture(MSGTSSTART, MSGTSFINISH);
-		tablePortalCapture.setContainerDataSource(buildContainer(listResultFieldCapture));
+
+		hlPublicStats.addComponent(tableResDeploy);
+		hlPublicStats.addComponent(tableResDestroy);
+		hlPublicStats.addComponent(tableLinkCreate);
+		hlPublicStats.addComponent(tableLinkDestroy);
+		hlPublicStats.addComponent(tableFieldCreate);
+		hlPublicStats.addComponent(tableFieldDestroy);
 		hlPublicStats.addComponent(tablePortalCapture);
 
-		vlGlobalFilter.addComponent(hlPublicStats);
-		setContent(vlGlobalFilter);
+		buildContainerDataSource(MSGTSSTART, MSGTSFINISH);
+
+		vlGlobalLayout.addComponent(hlPublicStats);
+		setContent(vlGlobalLayout);
+
+	}
+
+	private void buildContainerDataSource(long startDateFilter, long finishDateFilter) {
+
+		tableResDeploy.setContainerDataSource(buildContainer(sysCommService.dailyResDeploy(startDateFilter,
+				finishDateFilter)));
+		tableResDestroy.setContainerDataSource(buildContainer(sysCommService.dailyResDestroy(startDateFilter,
+				finishDateFilter)));
+		tableLinkCreate.setContainerDataSource(buildContainer(sysCommService.dailyLinkCreate(startDateFilter,
+				finishDateFilter)));
+		tableLinkDestroy.setContainerDataSource(buildContainer(sysCommService.dailyLinkDestroy(
+				startDateFilter, finishDateFilter)));
+		tableFieldCreate.setContainerDataSource(buildContainer(sysCommService.dailyFieldCreate(
+				startDateFilter, finishDateFilter)));
+		tableFieldDestroy.setContainerDataSource(buildContainer(sysCommService.dailyFieldDestroy(
+				startDateFilter, finishDateFilter)));
+		tablePortalCapture.setContainerDataSource(buildContainer(sysCommService.dailyPortalCapture(
+				startDateFilter, finishDateFilter)));
 
 	}
 
@@ -160,6 +175,13 @@ public class PublicStats extends Panel implements View {
 		}
 
 		return container;
+	}
+
+	private Date minusDays(Date date, int days) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, days); // minus number would decrement the days
+		return cal.getTime();
 	}
 
 	@Override

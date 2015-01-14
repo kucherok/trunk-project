@@ -15,37 +15,37 @@ public class SysCommServiceImpl implements SysCommService {
 	private SysCommRepository sysCommRepository;
 
 	@Override
-	public List<Object[]> dailyResDeploy(Integer msgtsStart, Integer msgtsFinish) {
+	public List<Object[]> dailyResDeploy(Long msgtsStart, Long msgtsFinish) {
 		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "resdeploy");
 	}
 
 	@Override
-	public List<Object[]> dailyResDestroy(Integer msgtsStart, Integer msgtsFinish) {
+	public List<Object[]> dailyResDestroy(Long msgtsStart, Long msgtsFinish) {
 		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "resdestroy");
 	}
 
 	@Override
-	public List<Object[]> dailyLinkCreate(Integer msgtsStart, Integer msgtsFinish) {
+	public List<Object[]> dailyLinkCreate(Long msgtsStart, Long msgtsFinish) {
 		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "linkcreate");
 	}
 
 	@Override
-	public List<Object[]> dailyLinkDestroy(Integer msgtsStart, Integer msgtsFinish) {
+	public List<Object[]> dailyLinkDestroy(Long msgtsStart, Long msgtsFinish) {
 		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "linkdestroy");
 	}
 
 	@Override
-	public List<Object[]> dailyFieldCreate(Integer msgtsStart, Integer msgtsFinish) {
+	public List<Object[]> dailyFieldCreate(Long msgtsStart, Long msgtsFinish) {
 		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "fieldcreate");
 	}
 
 	@Override
-	public List<Object[]> dailyFieldDestroy(Integer msgtsStart, Integer msgtsFinish) {
+	public List<Object[]> dailyFieldDestroy(Long msgtsStart, Long msgtsFinish) {
 		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "fielddestroy");
 	}
 
 	@Override
-	public List<Object[]> dailyPortalCapture(Integer msgtsStart, Integer msgtsFinish) {
+	public List<Object[]> dailyPortalCapture(Long msgtsStart, Long msgtsFinish) {
 		return sysCommRepository.dailyActivity(msgtsStart, msgtsFinish, "portalcapture");
 	}
 
